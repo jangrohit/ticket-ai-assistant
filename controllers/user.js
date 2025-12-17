@@ -10,14 +10,16 @@ export const signUpUser = async (req, res) => {
       email,
       password,
       skills,
-    }).select("-password");
+    });
     // fire inngest event
     await inngest.send({
       name: "user/sign-up",
       data: { email },
     });
     const token = generateToken(user);
-    return res.status(201).json({ user, token });
+    return res
+      .status(201)
+      .json({ user: { email: user.email, skills: user.skills }, token });
   } catch (error) {
     console.error("Error signing up user:", error);
     return res

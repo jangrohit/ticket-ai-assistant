@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import { TICKET_PRIORITY, TICKET_STATUS } from "utils/constant";
+import { TICKET_PRIORITY, TICKET_STATUS } from "../utils/constant.js";
 
 const ticketSchema = new mongoose.Schema({
   title: { type: String, required: true },
