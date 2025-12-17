@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
-import bcrypt from "bcryptjs";
-import { USER_ROLES } from "utils/constant";
+import bcrypt from "bcrypt";
+import { USER_ROLES } from "../utils/constant.js";
 
 const userSchema = new mongoose.Schema({
   email: { type: String, required: true, unique: true },

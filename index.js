@@ -1,5 +1,4 @@
 import express from "express";
-import mongoose from "mongoose";
 import dotenv from "dotenv";
 import cors from "cors";
 import connectDB from "./config/dbConnection.js";
@@ -14,7 +13,10 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 app.use(`${BASE_URL}`, userRoutes);
+app.get(`${BASE_URL}/`, (req, res) => {
+  res.status(200).send({ message: "app is working" });
+});
 
-const server = app.listen(PORT, () =>
-  console.log(`app is running on http://localhost:${PORT}`)
+app.listen(PORT, () =>
+  console.log(`app is running on http://localhost:${PORT}${BASE_URL}`)
 );

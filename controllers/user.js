@@ -1,7 +1,7 @@
-import User from "../models/User.js";
+import User from "../models/userModel.js";
 
 import { inngest } from "../inngest/client.js";
-import { generateToken } from "config/tokenGenerator.js";
+import { generateToken } from "../config/tokenGenerator.js";
 
 export const signUpUser = async (req, res) => {
   const { email, password, skills = [] } = req.body;

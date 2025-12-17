@@ -4,9 +4,9 @@ import {
   logoutUser,
   signUpUser,
   updateUser,
-} from "controllers/user";
+} from "../controllers/user.js";
 import express from "express";
-import { authenticate } from "middleware/auth";
+import { authenticate } from "../middleware/auth.js";
 
 const route = express.Router();
 
