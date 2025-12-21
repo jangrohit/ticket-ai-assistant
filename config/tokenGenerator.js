@@ -3,8 +3,8 @@ import jwt from "jsonwebtoken";
 dotenv.config();
 
 export const generateToken = (user) => {
-  const { _id: id, role, email } = user;
-  return jwt.sign({ id, role, email }, process.env.JWT_SECRET, {
+  const { _id, role, email } = user;
+  return jwt.sign({ _id, role, email }, process.env.JWT_SECRET, {
     expiresIn: "2d",
   });
 };

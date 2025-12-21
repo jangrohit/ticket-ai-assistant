@@ -13,7 +13,7 @@ export const createTicket = async (req, res) => {
       description,
       createdBy: req.user._id.toString(),
     });
-    await inngest.json({
+    await inngest.send({
       name: "ticket/created",
       data: { ticketId: ticket._id, ...ticket },
     });
@@ -57,7 +57,7 @@ export const getTicket = async (req, res) => {
       ticket = await Ticket.findOne({
         createdBy: user._id,
         _id: id,
-      }).select("title description status createdAt");
+      }).populate("assignedTo", "email _id");
     if (!ticket)
       return res.status(404).json({ message: "Ticket is not found" });
     return res.status(200).json(ticket);

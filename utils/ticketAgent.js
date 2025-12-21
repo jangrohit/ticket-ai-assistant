@@ -1,11 +1,11 @@
-import { createAgent, gemini } from "@inngest/agent-kit";
+import { createAgent, openai } from "@inngest/agent-kit";
 
 export const analyzeTicketAgent = async (ticket) => {
   const supportAgent = createAgent({
     name: "AI Support Ticket Analyzer",
-    model: gemini({
-      model: "gemini-1.5-turbo",
-      apiKey: process.env.GEMINI_API_KEY,
+    model: openai({
+      model: "gpt-4o-mini",
+      apiKey: process.env.OPENAI_API_KEY,
     }),
     system: `You are an expert AI assistant that processes technical support tickets. 
 
@@ -47,8 +47,7 @@ export const analyzeTicketAgent = async (ticket) => {
 
             - Title: ${ticket.title}
             - Description: ${ticket.description}`);
-
-  const raw = response.output[0].context;
+  const raw = response.output[0].content;
   try {
     const match = raw.match(/```json\s*([\s\S]*?)\s*```/i);
     const jsonString = match ? match[1] : raw.trim();

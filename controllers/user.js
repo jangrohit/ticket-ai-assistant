@@ -39,8 +39,11 @@ export const loginUser = async (req, res) => {
     if (!isMatch) {
       return res.status(401).json({ message: "Invalid email or password" });
     }
-    const token = generateToken(user._id, user.role);
-    return res.status(200).json({ user, token });
+    const token = generateToken(user);
+    return res.status(200).json({
+      user: { email: user.email, role: user.role, skills: user.skills },
+      token,
+    });
   } catch (error) {
     console.error("Error signing up user:", error);
     return res
@@ -58,7 +61,7 @@ export const logoutUser = async (req, res) => {
 export const updateUser = async (req, res) => {
   const { email, skills = [], role } = req.body;
   try {
-    if (role !== "admin") {
+    if (req.user.role !== "admin") {
       return res
         .status(403)
         .json({ message: "Only admin users can update user details" });

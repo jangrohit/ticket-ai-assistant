@@ -70,15 +70,17 @@ export const ticketCreated = inngest.createFunction(
         await Ticket.findByIdAndUpdate(ticketId, { assignedTo: user?._id });
         return user;
       });
-      await step.run("send-notification-mail", async () => {
-        const ticket = await Ticket.findById(ticketId);
-        const subject = "Ticket assigned!";
-        const text = `Hello ${moderator.email},\n\nA new ticket ${ticket.title} is assigned to you with priority ${ticket.priority}\n\nBest regards,\nThe Ticket AI Assistant Team`;
-        await sendMail(moderator.email, subject, text);
-        console.log(
-          `Sending email to: ${moderator.email}\nSubject: ${subject}\n\n${text}`
-        );
-      });
+      if (moderator) {
+        await step.run("send-notification-mail", async () => {
+          const ticket = await Ticket.findById(ticketId);
+          const subject = "Ticket assigned!";
+          const text = `Hello ${moderator.email},\n\nA new ticket ${ticket.title} is assigned to you with priority ${ticket.priority}\n\nBest regards,\nThe Ticket AI Assistant Team`;
+          await sendMail(moderator.email, subject, text);
+          console.log(
+            `Sending email to: ${moderator.email}\nSubject: ${subject}\n\n${text}`
+          );
+        });
+      }
       return { success: true };
     } catch (error) {
       console.error("Error in ticket created function:", error);
