@@ -203,13 +203,112 @@ cd backend
 yarn inngest-dev
 ```
 
-### Option 2: Using Docker (if configured)
+### Option 2: Using Docker
 
-```bash
-docker-compose up
-```
+#### Building the Docker Image
 
-The frontend will be available at `http://localhost:5173` and the backend API at `http://localhost:5000/api`.
+1. **Build the Backend Docker Image:**
+
+   ```bash
+   cd backend
+   docker build -t ai-assistant-backend:latest .
+   ```
+
+2. **Run the Docker Container:**
+
+   ```bash
+   docker run --env-file .env -p 5001:5001 ai-assistant-backend:latest
+   ```
+
+   Or with specific environment variables:
+
+   ```bash
+   docker run -e PORT=5001 \
+     -e MONGODB_URI=mongodb://host.docker.internal:27017/ticket-ai-assistant \
+     -e JWT_SECRET=your_jwt_secret \
+     -e GEMINI_API_KEY=your_gemini_api_key \
+     -e INNGEST_EVENT_KEY=your_inngest_event_key \
+     -e INNGEST_SIGNING_KEY=your_inngest_signing_key \
+     -p 5001:5001 \
+     ai-assistant-backend:latest
+   ```
+
+#### Using Docker Compose
+
+1. **Create a `docker-compose.yml` file** (if not present):
+
+   ```yaml
+   version: "3.8"
+
+   services:
+     mongodb:
+       image: mongo:latest
+       ports:
+         - "27017:27017"
+       environment:
+         MONGO_INITDB_ROOT_USERNAME: root
+         MONGO_INITDB_ROOT_PASSWORD: password
+       volumes:
+         - mongo_data:/data/db
+
+     backend:
+       build: ./backend
+       ports:
+         - "5001:5001"
+       environment:
+         PORT: 5001
+         MONGODB_URI: mongodb://root:password@mongodb:27017/ticket-ai-assistant
+         JWT_SECRET: your_jwt_secret
+         GEMINI_API_KEY: ${GEMINI_API_KEY}
+         INNGEST_EVENT_KEY: ${INNGEST_EVENT_KEY}
+         INNGEST_SIGNING_KEY: ${INNGEST_SIGNING_KEY}
+         EMAIL_USER: ${EMAIL_USER}
+         EMAIL_PASSWORD: ${EMAIL_PASSWORD}
+         FRONTEND_URL: http://localhost:5173
+       depends_on:
+         - mongodb
+       networks:
+         - ticket-network
+
+   volumes:
+     mongo_data:
+
+   networks:
+     ticket-network:
+       driver: bridge
+   ```
+
+2. **Run with Docker Compose:**
+
+   ```bash
+   docker-compose up -d
+   ```
+
+3. **Stop the services:**
+
+   ```bash
+   docker-compose down
+   ```
+
+#### Docker Build Best Practices
+
+- Ensure the `Dockerfile` is present in the `backend/` directory
+- Use `.dockerignore` to exclude `node_modules`, `.env`, and other unnecessary files:
+
+  ```
+  node_modules
+  npm-debug.log
+  .env
+  .git
+  .gitignore
+  README.md
+  dist
+  ```
+
+- For production, use a multi-stage build to reduce image size
+- Always tag images with a version: `docker build -t ai-assistant-backend:1.0.0 .`
+
+The frontend will be available at `http://localhost:5173` and the backend API at `http://localhost:5001/api` (or `http://localhost:5000/api` if running without Docker).
 
 ## API Endpoints
 
